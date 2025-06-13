@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h2>MADE BY OGKOMASIC</h2>
+    <input type="password" id="haslo" placeholder="Hasło">
+    <button onclick="zaloguj()">Zaloguj się</button>
+    <p id="blad"></p>
+
+    <script>
+        function zaloguj() {
+            const poprawneHaslo = "ogkomasic";
+            const wpisaneHaslo = document.getElementById("haslo").value;
+
+            if (wpisaneHaslo === poprawneHaslo) {
+                window.location.href = "panel.html";
+            } else {
+                document.getElementById("blad").innerText = "Błędne hasło!";
+            }
+        }
+    </script>
+</body>
+</html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="assets/login.css"/>
