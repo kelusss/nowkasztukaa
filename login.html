@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/login.css"/>
+  <link rel="icon" type="image/x-icon" href="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4=w240-h480-rw">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Dodanie Font Awesome do strony -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>Login</title>
+</head>
+<body>
+
+  <a href="https://t.me/ogkomasic" target="_blank" id="telegram-link">
+    <img src="assets/telegram-5662082_960_720.jpg" alt="Telegram" id="telegram-icon" />
+  </a>
+
+  <video autoplay muted loop playsinline preload="auto" id="bg-video">
+    <source src="assets/29876134-30a2-4a0d-b259-85e1e835bb70 (1).mp4" type="video/mp4">
+    Twoja przeglądarka nie obsługuje wideo.
+  </video>
+
+  <audio id="myAudio" loop>
+    <source src="assets/vkie-x-tef-paliwo-2019.mp3" type="audio/mpeg">
+    Twoja przeglądarka nie obsługuje elementu audio.
+  </audio>
+
+  <!-- Przycisk z ikoną głośnika -->
+  <button id="muteAudioBtn" title="Wycisz/Załącz dźwięk">
+    <i class="fas fa-volume-up"></i> <!-- Ikona głośnika -->
+  </button>
+
+  <script>
+    const muteButton = document.getElementById('muteAudioBtn');
+    const audio = document.getElementById('myAudio');
+    
+    muteButton.addEventListener('click', () => {
+      // Zmiana stanu wyciszenia
+      if (audio.muted) {
+        audio.muted = false;
+        muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';  // Ikona głośnika włączona
+      } else {
+        audio.muted = true;
+        muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';  // Ikona głośnika wyciszona
+      }
+    });
+
+    // Odtwarzanie muzyki po kliknięciu gdziekolwiek
+    document.addEventListener('click', () => {
+      audio.play().catch(err => {
+        console.log("Nie udało się odtworzyć audio:", err);
+      });
+    }, { once: true });
+  </script>
+
+  <div class="container">
+    <h1>JEBAC WAS KURWY NIE MA JUZ NIC ZA DARMO</h1>
+      <p>MADE BY OGKOMASIC</p>
+    <form id="loginForm">
+      <input type="password" id="password" required placeholder="Wpisz hasło">
+      <button type="submit">ZALOGUJ SIĘ</button>
+    </form>
+    <p id="error-message">Błędne hasło lub hasło zostało już użyte!</p>
+  </div>
+
+  <!-- Najpierw ładowanie najnowszej wersji skryptu Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest"></script>
+
+  <!-- Potem twój kod -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.5/+esm" type="module"></script>
+
+<!-- Twój kod -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.5/+esm';
+
+  // Inicjalizacja Supabase
+  const supabaseUrl = 'https://swvpxceqozxqndqrboov.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3dnB4Y2Vxb3p4cW5kcXJib292Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc0Mzk0MDMsImV4cCI6MjA2MzAxNTQwM30.nEy5ROQRVv_6pxcBtKTAj3Qx4rdLzRX9ikIXJqK77bQ';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // Obsługa formularza
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const password = document.getElementById('password').value;
+      errorMessage.style.display = 'none';
+
+      try {
+        const { data, error } = await supabase
+          .from('passwords')
+          .select('*')
+          .eq('password', password)
+          .eq('used', false)
+          .maybeSingle(); // może zwrócić null bez błędu
+
+        if (error || !data) {
+          errorMessage.style.display = 'block';
+          return;
+        }
+
+        const { error: updateError } = await supabase
+          .from('passwords')
+          .update({ used: true })
+          .eq('id', data.id);
+
+        if (updateError) {
+          console.error('Błąd przy aktualizacji hasła:', updateError);
+          errorMessage.style.display = 'block';
+          return;
+        }
+
+        sessionStorage.setItem('loggedIn', 'true');
+        window.location.href = 'index.html';
+      } catch (err) {
+        console.error('Błąd logowania:', err);
+        errorMessage.style.display = 'block';
+      }
+    });
+  });
+</script>
+  
+</body>
+</html>
